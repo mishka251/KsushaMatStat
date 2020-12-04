@@ -101,36 +101,193 @@ namespace KsushaMatStat
     public partial class Form1 : Form
     {
         private InputData inputData;
+
+        private List<TextBox> StrategyTBs;
+        private List<TextBox> StrategyTBS;
+        private List<Button> StrategyRmBtns;
+
+        private const int tbH = 30;
+        private const int tbW = 60;
+
+        private const int tbPad = 20;
+        private const int tbTopPad = 30;
+
+        private int n = 0;
+        
         public Form1()
         {
             InitializeComponent();
-            this.inputData = new InputData(15, 67, 36, 1, 4, 1, new List<StrategyData>()
+            this.inputData = new InputData(36, 15, 1, 67, 1, 4, new List<StrategyData>()
             {
                 new StrategyData(15, 50),
                 new StrategyData(15, 60),
-                
+
                 new StrategyData(20, 40),
                 new StrategyData(20, 60),
                 new StrategyData(20, 80),
                 new StrategyData(20, 100),
-                
+
                 new StrategyData(40, 50),
                 new StrategyData(40, 60),
                 new StrategyData(40, 80),
                 new StrategyData(40, 100),
-                
+
                 new StrategyData(60, 70),
                 new StrategyData(60, 80),
                 new StrategyData(60, 100),
             });
+
+            this.tbN.Text = this.inputData.N.ToString();
+            this.TBi0.Text = this.inputData.i0.ToString();
+            this.tbI.Text = this.inputData.i.ToString();
+            this.tbK.Text = this.inputData.К.ToString();
+            this.tbh.Text = this.inputData.h.ToString();
+            this.tbw.Text = this.inputData.w.ToString();
+
             
+            StrategyTBs= new List<TextBox>();
+            StrategyTBS= new List<TextBox>();
+            StrategyRmBtns = new List<Button>();
+            
+            
+            for (int i = 0; i < inputData.Strategies.Count; i++)
+            {
+                TextBox tbs = new TextBox();
+                tbs.Top = tbTopPad+ tbPad + (tbH+tbPad) * i;
+                tbs.Height = tbH;
+                tbs.Width = tbW;
+                tbs.Left = tbPad;
+                tbs.Text = inputData.Strategies[i].s.ToString();
+                this.StrategyTBs.Add(tbs);
+                
+                TextBox tbS = new TextBox();
+                tbS.Top = tbTopPad+tbPad + (tbH+tbPad) * i;
+                tbS.Height = tbH;
+                tbS.Width = tbW;
+                tbS.Left = tbPad + tbW + tbPad;
+                tbS.Text = inputData.Strategies[i].S.ToString();
+                this.StrategyTBS.Add(tbS);
+                
+                Button btn = new Button();
+                btn.Text = "-";
+                btn.Top = tbTopPad+tbPad + (tbH+tbPad) * i;
+                btn.Height = tbH;
+                btn.Width = 20;
+                btn.Left = tbPad + tbW + tbPad+tbW+tbPad;
+
+                btn.Click += (sender, args) =>
+                {
+                    int index = this.StrategyRmBtns.IndexOf(sender as Button);
+                    
+                    this.panel1.Controls.Remove(this.StrategyRmBtns[index]);
+                    this.panel1.Controls.Remove(this.StrategyTBs[index]);
+                    this.panel1.Controls.Remove(this.StrategyTBS[index]);
+                    
+                    this.StrategyRmBtns.RemoveAt(index);
+                    this.inputData.Strategies.RemoveAt(index);
+                    this.StrategyTBs.RemoveAt(index);
+                    this.StrategyTBS.RemoveAt(index);
+                };
+
+                n = inputData.Strategies.Count;
+                
+                this.StrategyRmBtns.Add(btn);
+                
+                
+                this.panel1.Controls.Add(tbS);
+                this.panel1.Controls.Add(tbs);
+                this.panel1.Controls.Add(btn);
+            }
+            
+            
+        }
+
+        void ParseData()
+        {
+            this.inputData.N = int.Parse(this.tbN.Text);
+            this.inputData.i0 = int.Parse(this.TBi0.Text);
+            this.inputData.i = int.Parse(this.tbI.Text);
+            this.inputData.К = int.Parse(this.tbK.Text);
+            this.inputData.h = int.Parse(this.tbh.Text);
+            this.inputData.w = int.Parse(this.tbw.Text);
+
+            for (int i = 0; i < inputData.Strategies.Count; i++)
+            {
+                this.inputData.Strategies[i].s = int.Parse(this.StrategyTBs[i].Text); 
+                this.inputData.Strategies[i].S = int.Parse(this.StrategyTBS[i].Text);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            this.ParseData();
             Calculator calc = new Calculator();
             var res =  calc.Calculate(this.inputData);
-            MessageBox.Show("ok");
+            //MessageBox.Show("ok");
+
+            int bestInd = 0;
+            for(int i =1; i<res.Count; i++)
+            {
+                if (res[i].Sob < res[bestInd].Sob)
+                {
+                    bestInd = i;
+                }
+            }
+
+            ResultForm rf = new ResultForm(res, bestInd);
+            rf.Show();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.inputData.Strategies.Add(new StrategyData(0, 0));
+            int _n = this.inputData.Strategies.Count - 1;
+            TextBox tbs = new TextBox();
+            tbs.Top = tbTopPad+ tbPad + (tbH+tbPad) * n;
+            tbs.Height = tbH;
+            tbs.Width = tbW;
+            tbs.Left = tbPad;
+            tbs.Text = inputData.Strategies[_n].s.ToString();
+            this.StrategyTBs.Add(tbs);
+                
+            TextBox tbS = new TextBox();
+            tbS.Top = tbTopPad+tbPad + (tbH+tbPad) * n;
+            tbS.Height = tbH;
+            tbS.Width = tbW;
+            tbS.Left = tbPad + tbW + tbPad;
+            tbS.Text = inputData.Strategies[_n].S.ToString();
+            this.StrategyTBS.Add(tbS);
+            
+            Button btn = new Button();
+            btn.Text = "-";
+            btn.Top = tbTopPad+tbPad + (tbH+tbPad) * n;
+            btn.Height = tbH;
+            btn.Width = 20;
+            btn.Left = tbPad + tbW + tbPad+tbW+tbPad;
+
+            btn.Click += (sender, args) =>
+            {
+                int index = this.StrategyRmBtns.IndexOf(sender as Button);
+                
+                this.panel1.Controls.Remove(this.StrategyRmBtns[index]);
+                this.panel1.Controls.Remove(this.StrategyTBs[index]);
+                this.panel1.Controls.Remove(this.StrategyTBS[index]);
+
+                this.StrategyRmBtns.RemoveAt(index);
+                this.inputData.Strategies.RemoveAt(index);
+                this.StrategyTBs.RemoveAt(index);
+                this.StrategyTBS.RemoveAt(index);
+            };
+                
+            this.StrategyRmBtns.Add(btn);
+                
+                
+            this.panel1.Controls.Add(tbS);
+            this.panel1.Controls.Add(tbs);
+            this.panel1.Controls.Add(btn);
+
+            n++;
+
         }
     }
 }
