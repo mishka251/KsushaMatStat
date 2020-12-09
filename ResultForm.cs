@@ -5,8 +5,12 @@ using System.Windows.Forms;
 
 namespace KsushaMatStat
 {
+    /// <summary>
+    /// Форма для результатов
+    /// </summary>
     public partial class ResultForm : Form
     {
+        //параметры для расположения автодобавляемых текстбоксов и лейблов
         private const int lblTop = 70;
 
         const int lblPadY = 15;
@@ -15,7 +19,11 @@ namespace KsushaMatStat
         private const int lblH = 20;
         private const int lblW = 100;
 
-
+/// <summary>
+/// В коутрукторе получаем результаты
+/// </summary>
+/// <param name="results">результаты оценки стратегий</param>
+/// <param name="bestI">индекс лучшей стратегии</param>
         public ResultForm(List<StrategyCalculationResult> results, int bestI = -1)
         {
             InitializeComponent();
@@ -23,7 +31,7 @@ namespace KsushaMatStat
             for (int i = 0; i < results.Count; i++)
             {
                 var result = results[i];
-
+//для каждой стратегии генерим лейбл с ней
                 Label lblStrat = new Label();
                 lblStrat.Top = lblTop + lblPadY + i * lblH;
                 lblStrat.Left = lblPadX;
@@ -71,7 +79,7 @@ namespace KsushaMatStat
 
                 this.Controls.Add(lblSneh);
 
-                if (i == bestI)
+                if (i == bestI)//задаем лучшей стратегии цает
                 {
                     lblStrat.BackColor = Color.Chartreuse;
                     lblSrOb.BackColor = Color.Chartreuse;

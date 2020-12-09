@@ -100,12 +100,19 @@ namespace KsushaMatStat
 
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Исходные данные
+        /// </summary>
         private InputData inputData;
 
+        /// <summary>
+        /// Список ткстбоксов для ввода стратегий
+        /// </summary>
         private List<TextBox> StrategyTBs;
         private List<TextBox> StrategyTBS;
         private List<Button> StrategyRmBtns;
 
+        //параметры для генераии текстбоксов
         private const int tbH = 30;
         private const int tbW = 60;
 
@@ -117,6 +124,7 @@ namespace KsushaMatStat
         public Form1()
         {
             InitializeComponent();
+            //исходдные данные "по умолчанию"
             this.inputData = new InputData(36, 15, 1, 67, 1, 4, new List<StrategyData>()
             {
                 new StrategyData(15, 50),
@@ -137,6 +145,7 @@ namespace KsushaMatStat
                 new StrategyData(60, 100),
             });
 
+            //записываем их на форму
             this.tbN.Text = this.inputData.N.ToString();
             this.TBi0.Text = this.inputData.i0.ToString();
             this.tbI.Text = this.inputData.i.ToString();
@@ -202,6 +211,9 @@ namespace KsushaMatStat
             
         }
 
+        /// <summary>
+        /// Считываем введенные данные в исходные
+        /// </summary>
         void ParseData()
         {
             this.inputData.N = int.Parse(this.tbN.Text);
@@ -220,6 +232,7 @@ namespace KsushaMatStat
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //ввод, расчёты, вывож
             this.ParseData();
             Calculator calc = new Calculator();
             var res =  calc.Calculate(this.inputData);
@@ -238,6 +251,7 @@ namespace KsushaMatStat
             rf.Show();
         }
 
+        //создание текстбоксов для добавления стратегии
         private void button2_Click(object sender, EventArgs e)
         {
             this.inputData.Strategies.Add(new StrategyData(0, 0));
@@ -265,6 +279,7 @@ namespace KsushaMatStat
             btn.Width = 20;
             btn.Left = tbPad + tbW + tbPad+tbW+tbPad;
 
+            //удаление стратегии с формы
             btn.Click += (sender, args) =>
             {
                 int index = this.StrategyRmBtns.IndexOf(sender as Button);
